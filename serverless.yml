@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: firstclass
 
 plugins:
@@ -25,10 +12,34 @@ provider:
 functions:
   PublishMessage:
     handler: src/publishMessage/publishMessageHandler.handler
-
+    environment:
+      MESSAGE_QUEUE_URL: !Ref MessageQueue
+    iamRoleStatementsName: ${self:service}-${self:provider.stage}-PublishMessageRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:SendMessage
+        Resource:
+         - !GetAtt MessageQueue.Arn
+    events:
+      - http:
+          path: message/createMessage
+          method: post
+          cors: true
+      
   ReceiveMessage:
     handler: src/publishMessage/receiveMessage.handler
-
+    iamRoleStatementsName: ${self:service}-${self:provider.stage}-ReceiveMessageRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sns:Publish
+        Resource:
+          - !Ref MessageTopic      
+    events:
+      - sqs:
+          arn: 
+            !GetAtt MessageTopic.Arn
 
 resources:
   Resources:
@@ -39,6 +50,7 @@ resources:
     MessageTopic:
       Type: AWS::SNS::Topic
       Properties:
+        DisplayName: Message SNS Topic
         TopicName: ${self:service}-${self:provider.stage}-MessageTopic
         Subscription:
           - Endpoint: devmartinese@gmail.com
