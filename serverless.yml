@@ -29,6 +29,8 @@ functions:
       
   ReceiveMessage:
     handler: src/publishMessage/receiveMessage.handler
+    environment:
+      MESSAGE_TOPIC_URL: !Ref MessageTopic
     iamRoleStatementsName: ${self:service}-${self:provider.stage}-ReceiveMessageRole
     iamRoleStatements:
       - Effect: Allow
@@ -39,7 +41,7 @@ functions:
     events:
       - sqs:
           arn: 
-            !GetAtt MessageTopic.Arn
+            !GetAtt MessageQueue.Arn
 
 resources:
   Resources:
