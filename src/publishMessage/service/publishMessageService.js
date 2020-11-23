@@ -5,7 +5,9 @@ const MESSAGE_QUEUE_URL = config.get('MESSAGE_QUEUE_URL');
 module.exports = async payload => {
 
     const sqsSendParams = {
-      MessageBody: payload,
+      MessageBody: {
+        Payload: payload
+      },
       QueueUrl: MESSAGE_QUEUE_URL
     };
 

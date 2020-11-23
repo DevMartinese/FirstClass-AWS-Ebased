@@ -4,9 +4,13 @@ const publishMessageService = require('../service/publishMessageService');
 module.exports = async (commandPayload, commandMeta) => {
     const { name } = commandPayload;
 
-    new CreateMessageValidation(commandPayload, commandMeta);
-    await publishMessageService(commandPayload);
-    return {body: name};
+    new CreateMessageValidation(commandPayload, commandMeta).get();
+    await publishMessageService(name);
+    return {
+        body: {
+            message: `${name}`
+        }
+    };
 };
 
 class CreateMessageValidation extends InputValidation {
