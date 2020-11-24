@@ -1,6 +1,6 @@
-const { messagePublish } = require('../service/receiveMessageService');
+const receiveMessageService = require('../service/receiveMessageService');
 
-module.exports = async (eventPayload, eventMeta) => {
-    await messagePublish({eventPayload, eventMeta});
+module.exports = async eventPayload => {
+    await receiveMessageService(eventPayload);
     return {body: eventPayload};
 };

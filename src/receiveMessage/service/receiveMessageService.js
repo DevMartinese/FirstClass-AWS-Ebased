@@ -2,13 +2,9 @@ const sns = require('ebased/service/downstream/sns');
 const config = require('ebased/util/config');
 const MESSAGE_TOPIC_URL = config.get('MESSAGE_TOPIC_URL');
 
-const messagePublish = async (messagePublishEvent) => {
-    const { eventPayload, eventMeta } = messagePublishEvent.get();
-    const snsPublishParams = {
+module.exports = async payload => {
+    await sns.publish ({
         TopicArn: MESSAGE_TOPIC_URL,
-        Message: eventPayload
-    };
-    await sns.publish(snsPublishParams, eventMeta);
+        Message: payload
+    });
 };
-
-module.exports = { messagePublish };
